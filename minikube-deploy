@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+
+./build
+
+tar -zc . | (bash -c 'minikube ssh "$(cat <<'EOF'
+set -x
+set -euo pipefail
+sudo mkdir -p /home/task
+cd /home/task
+sudo chown docker:docker /home/task
+gunzip | tar -xv
+docker build . -t "echo-host"
+EOF
+)"')
+
+# PROJECT=${1}
+# gcloud --project "$PROJECT" container builds submit . -t "gcr.io/${PROJECT}/echo-hostname"
+
+kubectl apply -f ./deployment.yaml
