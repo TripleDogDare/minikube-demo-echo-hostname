@@ -3,12 +3,13 @@ set -euo pipefail
 
 ./build
 
+# tarpipe deploy
 tar -zc . | (bash -c 'minikube ssh "$(cat <<'EOF'
 set -x
 set -euo pipefail
 sudo mkdir -p /home/task
-cd /home/task
-sudo chown docker:docker /home/task
+cd $(mktemp -d)
+sudo chown docker:docker $PWD
 gunzip | tar -xv
 docker build . -t "echo-host"
 EOF
