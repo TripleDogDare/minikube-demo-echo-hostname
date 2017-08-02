@@ -4,15 +4,16 @@ set -euo pipefail
 ./build
 
 # tarpipe deploy
-tar -zc ./main ./Dockerfile  | (bash -c 'minikube ssh "$(cat <<'EOF'
-set -x
-set -euo pipefail
-cd "\$(mktemp -d)"
-pwd
-sudo chown docker:docker "\$PWD"
-gunzip | tar -xv
-ls -al
-docker build -t echo-host .
+tar -zc ./main ./Dockerfile  | (
+	bash -c 'minikube ssh "$(cat <<'EOF'
+		set -x
+		set -euo pipefail
+		cd "\$(mktemp -d)"
+		pwd
+		sudo chown docker:docker "\$PWD"
+		gunzip | tar -xv
+		ls -al
+		docker build -t echo-host .
 EOF
 )"')
 
